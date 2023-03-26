@@ -1,15 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Square from './components/Square'
 import { Patterns } from './components/Patterns';
 
 function App() {
   const [board, setBoard] = useState(["", "", "", "", "", "", "", "", ""])
-  const [player, setPlayer] = useState("X");
+  const [player, setPlayer] = useState("O");
   const [result, setResult] = useState({
     winner: "none",
     state: "none"
   })
   // by each movement we need to call a function to choose whether the pattern is met or not
+
+
+  // everytime the board has changed we need to call the useEffect hook
+  useEffect(() => {
+    checkWin();
+    // once the winner has been checked we need to change the olayer
+    if (player === "X") {
+      setPlayer("O")
+    } else {
+      setPlayer("X")
+    }
+  }, [board])
+  // Bear in mind that, by every click on the board, we change somethin inside it and it means we call useEffect function
+
+
+  useEffect(() => {
+    if (result.state != "none") {
+      alert(`Game Finished! Winning Player: ${result.winner}`)
+    }
+
+  }, [result])
 
 
   const chooseSquare = (square) => {
@@ -22,11 +43,7 @@ function App() {
       return val;
     }))
 
-    if (player === "X") {
-      setPlayer("O")
-    } else {
-      setPlayer("X")
-    }
+
   }
 
   // every time we make a movement we call this function
@@ -34,19 +51,22 @@ function App() {
   const checkWin = () => {
     Patterns.forEach((curPattern) => {
       const firstPlayer = board[curPattern[0]];
-      let foundWinnningPatter = true;
+      if (firstPlayer === "") return
+
+      let foundWinningPatter = true
       curPattern.forEach((idx) => {
         if (board[idx] != firstPlayer) {
-          foundWinnningPatter = false;
+          foundWinningPatter = false;
         }
       })
-
-      if (foundWinnningPatter) {
-        setResult({ winner: player, state: "won" })
+      if (foundWinningPatter) {
+        setResult({
+          winner: player,
+          state: "won"
+        })
       }
     })
   }
-
 
   return (
     <div className='App'>
