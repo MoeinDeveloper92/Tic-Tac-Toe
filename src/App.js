@@ -1,9 +1,15 @@
 import React, { useState } from 'react'
 import Square from './components/Square'
+import { Patterns } from './components/Patterns';
 
 function App() {
   const [board, setBoard] = useState(["", "", "", "", "", "", "", "", ""])
   const [player, setPlayer] = useState("X");
+  const [result, setResult] = useState({
+    winner: "none",
+    state: "none"
+  })
+  // by each movement we need to call a function to choose whether the pattern is met or not
 
 
   const chooseSquare = (square) => {
@@ -22,6 +28,26 @@ function App() {
       setPlayer("X")
     }
   }
+
+  // every time we make a movement we call this function
+
+  const checkWin = () => {
+    Patterns.forEach((curPattern) => {
+      const firstPlayer = board[curPattern[0]];
+      let foundWinnningPatter = true;
+      curPattern.forEach((idx) => {
+        if (board[idx] != firstPlayer) {
+          foundWinnningPatter = false;
+        }
+      })
+
+      if (foundWinnningPatter) {
+        setResult({ winner: player, state: "won" })
+      }
+    })
+  }
+
+
   return (
     <div className='App'>
       <div className='board'>
